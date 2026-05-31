@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { processStepMetas } from '@/data/stepMetas';
 import { loadStepDetail, loadAllSteps } from '@/data/steps';
 import type { ProcessStep } from '@/data/types';
-import { useSpeech } from '@/hooks/useSpeech';
+import { getNarrationAudioUrl, useSpeech } from '@/hooks/useSpeech';
 import { SiliconPurificationAnimation } from '@/components/process/SiliconPurification';
 import { WaferManufacturingAnimation } from '@/components/process/WaferManufacturing';
 import { PhotolithographyAnimation } from '@/components/process/Photolithography';
@@ -44,7 +44,7 @@ export function ProcessDetailPage() {
 
   // Build nameEn → Company lookup for subStep companyRefs resolution
   const companyMap = useMemo(() => {
-    if (!step) return new Map<string, typeof step.companies[number]>();
+    if (!step) return new Map<string, ProcessStep['companies'][number]>();
     return new Map(step.companies.map((c) => [c.nameEn, c]));
   }, [step]);
 
@@ -85,7 +85,7 @@ export function ProcessDetailPage() {
       stop();
       setIsSpeaking(false);
     } else {
-      speak(step.narration);
+      speak(getNarrationAudioUrl(step.id), () => setIsSpeaking(false));
       setIsSpeaking(true);
     }
   }, [isSpeaking, step, speak, stop]);
@@ -97,12 +97,9 @@ export function ProcessDetailPage() {
     setIsSpeaking(false);
   }, [id, stop]);
 
-  // Listen for speech end
+  // Cleanup on unmount: ensure speech is stopped
   useEffect(() => {
-    const handleEnd = () => setIsSpeaking(false);
-    window.speechSynthesis?.addEventListener('end', handleEnd);
     return () => {
-      window.speechSynthesis?.removeEventListener('end', handleEnd);
       stop();
     };
   }, [stop]);
@@ -189,7 +186,7 @@ export function ProcessDetailPage() {
                         ? 'bg-primary/20 text-primary shadow-glow'
                         : 'hover:bg-secondary text-muted-foreground hover:text-foreground'
                     }`}
-                    title={isSpeaking ? '停止语音' : '播放语音讲解'}
+                    title={isSpeaking ? '停止讲解' : '播放真人语音讲解'}
                   >
                     {isSpeaking ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
                   </button>
@@ -214,19 +211,19 @@ export function ProcessDetailPage() {
               {isSpeaking ? (
                 <>
                   <Volume2 className="h-3.5 w-3.5 text-primary" />
-                  <span className="text-primary">停止语音讲解</span>
+                  <span className="text-primary">停止真人语音讲解</span>
                 </>
               ) : (
                 <>
                   <Volume2 className="h-3.5 w-3.5 text-muted-foreground" />
-                  <span>播放中文语音讲解</span>
+                  <span>播放真人语音讲解</span>
                 </>
               )}
             </button>
 
             {/* Narration text - moved to left column below voice button */}
             <div className="mt-3 p-3 rounded-xl border border-border bg-card bg-gradient-card">
-              <h3 className="text-xs font-semibold text-chip-purple mb-1.5 flex items-center gap-2">
+              <h3 className="text-xs font-semibold text-chip-purple flex items-center gap-2 mb-1.5">
                 <span className="w-1 h-3.5 rounded-full bg-chip-purple" />
                 语音讲解文稿
               </h3>

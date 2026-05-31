@@ -3,3 +3,8 @@ dist
 dist-ssr
 *.local
 .DS_Store
+.vercel
+.vercel-tmp
+.env*
+tsconfig.app.tsbuildinfo
+tsconfig.tsbuildinfo

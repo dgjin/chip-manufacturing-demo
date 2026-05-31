@@ -23,7 +23,7 @@ export async function loadStepDetail(id: string): Promise<ProcessStep | null> {
 export async function loadAllSteps(): Promise<ProcessStep[]> {
   const entries = Object.entries(stepModules);
   const results = await Promise.all(
-    entries.map(async ([id, loader]) => {
+    entries.map(async ([, loader]) => {
       const mod = await loader();
       return mod.default;
     })

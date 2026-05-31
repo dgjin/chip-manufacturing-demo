@@ -26,7 +26,7 @@ export function HomePage() {
 
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
             十大核心工艺，百余个关键步骤，纳米级的极致精度。
-            通过交互式动画和语音讲解，深入了解一颗芯片的诞生之旅。
+            通过交互式动画和真人语音讲解，深入了解一颗芯片的诞生之旅。
           </p>
 
           <div className="flex items-center justify-center gap-4">
@@ -76,7 +76,7 @@ export function HomePage() {
       {/* Footer */}
       <footer className="py-8 border-t border-border">
         <div className="container text-center text-sm text-muted-foreground">
-          <p>芯片制造全流程动画演示 · 中文语音讲解 · 交互式学习</p>
+          <p>芯片制造全流程动画演示 · 真人语音讲解 · 交互式学习</p>
         </div>
       </footer>
     </div>
